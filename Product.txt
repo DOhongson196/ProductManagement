@@ -1,3 +1,4 @@
-{id=1,name=Son,manufacturer=Do,category=Hong,price=100.0}
-{id=2,name=Nhat,manufacturer=KHN,category=AD,price=200.0}
-{id=3,name=Khanh,manufacturer=Quoc,category=Trinh,price=100.0}
+{id=2,name=Nhat,manufacturer=Samsung,category=Laptop,price=300.0}
+{id=3,name=Iphone,manufacturer=Apple,category=Mobile,price=200.0}
+{id=4,name=Note,manufacturer=Samsung,category=Laptop,price=300.0}
+{id=5,name=Dat,manufacturer=Batch,category=Nos,price=900.0}

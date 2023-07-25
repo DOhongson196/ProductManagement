@@ -11,8 +11,15 @@ public class Product {
     }
 
 
-    public Product(int id, String name, String manufacturer, String category, double price) {
+    public Product(int id,String name, String manufacturer, String category, double price) {
         this.id = id;
+        this.name = name;
+        this.manufacturer = manufacturer;
+        this.category = category;
+        this.price = price;
+    }
+
+    public Product(String name, String manufacturer, String category, double price) {
         this.name = name;
         this.manufacturer = manufacturer;
         this.category = category;
@@ -61,6 +68,6 @@ public class Product {
 
     @Override
     public String toString() {
-        return id + "\t| " + name + "\t| " + manufacturer + "\t| " + category + "\t| " + price;
+        return String.format("%-3s| %-20s| %-20s| %-20s| %-10s", id, name, manufacturer, category, price);
     }
 }

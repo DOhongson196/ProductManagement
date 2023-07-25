@@ -5,8 +5,14 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        int ch = 7;
-        ProductManager productManager = new ProductManager();
+        int ch = 0;
+        ProductService productService = new ProductService();
+        boolean validNum;
+        String name;
+        String manufacturer;
+        String category;
+        double price = 0;
+        Product newProduct;
 
         do {
             System.out.println("Menu");
@@ -17,7 +23,7 @@ public class Main {
             System.out.println("4. Add product");
             System.out.println("5. Update product ID");
             System.out.println("6. Delete product ID");
-            System.out.println("0. EXIT");
+            System.out.println("7. EXIT");
             System.out.print("Input choice: ");
             try {
                 ch = Integer.parseInt(sc.nextLine());
@@ -27,78 +33,103 @@ public class Main {
             }
             switch (ch) {
                 case 1:
-                    productManager.getAllProducts();
+                    productService.displayAllProducts();
                     break;
                 case 2:
                     System.out.print("Enter product name to search: ");
                     String searchProductName = sc.nextLine();
-                    productManager.getProductByName(searchProductName);
+                    productService.getProductsByName(searchProductName);
                     break;
                 case 3:
-                    System.out.print("Enter product ID to search: ");
-                    int searchProductId = Integer.parseInt(sc.nextLine());
-                    Product foundProduct = productManager.findProductById(searchProductId);
-                    if (foundProduct != null) {
-                        System.out.println(foundProduct.toString());
-                    } else {
-                        System.out.println("Product not found.");
-                    }
-                    break;
-                case 4:
-                    System.out.println("Enter product details:");
-                    System.out.print("Name: ");
-                    String name = sc.nextLine();
-                    System.out.print("Manufacturer: ");
-                    String manufacturer = sc.nextLine();
-                    System.out.print("Category: ");
-                    String category = sc.nextLine();
-                    System.out.print("Price: ");
-                    double price = Double.parseDouble(sc.nextLine());
-
-                    Product newProduct = new Product(0, name, manufacturer, category, price);
-                    productManager.addProduct(newProduct);
-                    break;
-                case 5:
-                    System.out.print("Enter product ID to update: ");
-                    int updateProductId = Integer.parseInt(sc.nextLine());
-                    Product productToUpdate = productManager.findProductById(updateProductId);
-                    if (productToUpdate != null) {
-                        System.out.println("Enter updated product details:");
-                        System.out.print("Name: ");
-                        productToUpdate.setName(sc.nextLine());
-                        System.out.print("Manufacturer: ");
-                        productToUpdate.setManufacturer(sc.nextLine());
-                        System.out.print("Category: ");
-                        productToUpdate.setCategory(sc.nextLine());
-                        System.out.print("Price: ");
-                        boolean validPrice = false;
+                    validNum = false;
                         do {
                             try {
-                                System.out.print("Price: ");
-                                productToUpdate.setPrice(Double.parseDouble(sc.nextLine()));
-                                validPrice = true;
+                                System.out.print("Enter product ID to search: ");
+                                productService.getProductsById(Integer.parseInt(sc.nextLine()));
+                                validNum = true;
                             } catch (NumberFormatException e) {
-                                System.out.println("Invalid price! Please enter a valid number.");
+                                System.out.println("Invalid! Please enter a valid number.");
                             }
-                        } while (!validPrice);
+                        } while (!validNum);
 
-                        productManager.updateProductById(updateProductId, productToUpdate);
-                    } else {
-                        System.out.println("Product not found.");
+                    break;
+                case 4:
+                    System.out.println("Enter info product:");
+                    System.out.print("Product Name: ");
+                    name = sc.nextLine();
+                    System.out.print("Manufacturer: ");
+                    manufacturer = sc.nextLine();
+                    System.out.print("Category: ");
+                    category = sc.nextLine();
+                    validNum = false;
+                    price = 0;
+                    do {
+                        try {
+                            System.out.print("Price: ");
+                            price = Double.parseDouble(sc.nextLine());
+                            validNum = true;
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid! Please enter a valid number.");
+                        }
+                    } while (!validNum);
+
+                    newProduct = new Product( name, manufacturer, category, price);
+                    productService.addProduct(newProduct);
+                    break;
+                case 5:
+                    validNum = false;
+                    int id = 0;
+                    do {
+                        try {
+                            System.out.print("Enter product ID to update: ");
+                            id = Integer.parseInt(sc.nextLine());
+                            validNum = true;
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid! Please enter a valid number.");
+                        }
+                    } while (!validNum);
+                    if(!productService.getProductsById(id)){
+                        break;
                     }
+                    System.out.println("Enter info product:");
+                    System.out.print("Product Name: ");
+                    name = sc.nextLine();
+                    System.out.print("Manufacturer: ");
+                    manufacturer = sc.nextLine();
+                    System.out.print("Category: ");
+                    category = sc.nextLine();
+                    do {
+                        try {
+                            System.out.print("Price: ");
+                            price = Double.parseDouble(sc.nextLine());
+                            validNum = true;
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid! Please enter a valid number.");
+                        }
+                    } while (!validNum);
+                    newProduct = new Product(id, name, manufacturer, category, price);
+                    productService.updateProduct(newProduct);
                     break;
                 case 6:
-                    System.out.print("Enter product ID to delete: ");
-                    int deleteProductId = Integer.parseInt(sc.nextLine());
-                    productManager.deleteProduct(deleteProductId);
+                    validNum = false;
+                    do {
+                        try {
+                            System.out.print("Enter product ID to delete: ");
+                            productService.deleteById(Integer.parseInt(sc.nextLine()));
+                            validNum = true;
+                        } catch (NumberFormatException e) {
+                            System.out.println("Invalid! Please enter a valid number.");
+                        }
+                    } while (!validNum);
+
                     break;
-                case 0:
+                case 7:
                     System.out.println("Goodbye!");
                     break;
                 default:
                     System.out.println("Invalid choice! Please enter a valid number.");
             }
 
-        } while (ch != 0);
+        } while (ch != 7);
     }
 }

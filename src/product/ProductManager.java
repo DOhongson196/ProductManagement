@@ -1,103 +1,161 @@
 package product;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProductManager {
-    private List<Product> productList;
-    private FileManager fileManager;
+
+
+    private final String filePath = "D:\\java_core\\ProductManagement\\Product.txt";
 
     public ProductManager() {
-        productList = new ArrayList<>();
-        fileManager = new FileManager();
-        loadProducts();
     }
 
-    private void loadProducts() {
-        String content = fileManager.readFile();
-        if (content != null) {
-            String[] productData = content.split("\n");
-            for (String data : productData) {
-                Product product = Util.parseProduct(data);
+    public List<Product> getAllProducts() {
+        List<Product> productList = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                Product product = Util.parseProduct(line);
                 if (product != null) {
                     productList.add(product);
                 }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return productList;
     }
-    public void getProductByName(String name) {
+
+    public List<Product> getProductByName(String name) {
         List<Product> foundProducts = new ArrayList<>();
-        for (Product product : productList) {
-            if (product.getName().toLowerCase().contains(name.toLowerCase())) {
-                foundProducts.add(product);
+        String nameLower = name.toLowerCase();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String lineLower = line.toLowerCase();
+                if (lineLower.contains(nameLower)) {
+                    Product product = Util.parseProduct(line);
+                    if (product != null && product.getName().toLowerCase().contains(nameLower)) {
+                        foundProducts.add(product);
+                    }
+                }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return foundProducts;
+    }
 
-        if (!foundProducts.isEmpty()) {
-            System.out.println("Found " + foundProducts.size() + " product(s) matching the name '" + name + "':");
-            for (Product product : foundProducts) {
-                System.out.println(product.toString());
+    public Product getProductById(int id) {
+        Product product;
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("id=" + id + ",")) {
+                     product = Util.parseProduct(line);
+                    if (product != null && product.getId() == id) {
+                        return product;
+                    }
+                }
             }
-        } else {
-            System.out.println("No product found matching the name '" + name + "'.");
-        }
-    }
-
-    private void saveProducts() {
-        StringBuilder content = new StringBuilder();
-        for (Product product : productList) {
-            content.append(Util.stringifyProduct(product)).append("\n");
-        }
-        fileManager.writeFile(content.toString());
-    }
-
-    public void addProduct(Product product) {
-        int lastProductId = getLastProductId();
-        product.setId(lastProductId + 1);
-        productList.add(product);
-        saveProducts();
-    }
-
-    public void updateProductById(int productId, Product updatedProduct) {
-        for (Product product : productList) {
-            if (product.getId() == productId) {
-                product.setName(updatedProduct.getName());
-                product.setManufacturer(updatedProduct.getManufacturer());
-                product.setCategory(updatedProduct.getCategory());
-                product.setPrice(updatedProduct.getPrice());
-                break;
-            }
-        }
-        saveProducts();
-    }
-
-    public void deleteProduct(int productId) {
-        productList.removeIf(product -> product.getId() == productId);
-        saveProducts();
-    }
-
-    public void getAllProducts() {
-        for (Product product : productList) {
-            System.out.println(product.toString());
-        }
-    }
-
-    public Product findProductById(int productId) {
-        for (Product product : productList) {
-            if (product.getId() == productId) {
-                return product;
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
         return null;
     }
 
-    private int getLastProductId() {
-        int lastProductId = 0;
-        for (Product product : productList) {
-            if (product.getId() > lastProductId) {
-                lastProductId = product.getId();
+    private int getMaxProductId() {
+        int maxId = 0;
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                Product product = Util.parseProduct(line);
+                if (product != null && product.getId() > maxId) {
+                    maxId = product.getId();
+                }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return lastProductId;
+        return maxId;
     }
+
+    public boolean addProduct(Product product) {
+        int newId = getMaxProductId() + 1;
+        product.setId(newId);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
+            writer.write(Util.stringifyProduct(product));
+            writer.newLine();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public String deleteById(int productId) {
+        String result;
+        if (getProductById(productId) == null) {
+            return "Product Id not found";
+        }
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            StringBuilder content = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("id=" + productId + ",")) {
+                    Product product = Util.parseProduct(line);
+                    if (product != null && product.getId() != productId) {
+                        content.append(line).append("\n");
+                    }
+                }
+            }
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+                writer.write(content.toString());
+                result = "Delete success";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            result = "Delete fail";
+
+        }
+        return result;
+    }
+
+
+    public String updateById(Product updatedProduct) {
+        String result;
+        if (getProductById(updatedProduct.getId()) == null) {
+            return "Product Id not found";
+        }
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            StringBuilder content = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("id=" + updatedProduct.getId() + ",")) {
+                    Product product = Util.parseProduct(line);
+                    if (product != null && product.getId() == updatedProduct.getId()) {
+                        product.setName(updatedProduct.getName());
+                        product.setManufacturer(updatedProduct.getManufacturer());
+                        product.setCategory(updatedProduct.getCategory());
+                        product.setPrice(updatedProduct.getPrice());
+                    }
+                    content.append(Util.stringifyProduct(product)).append("\n");
+                }else{
+                    content.append(line).append("\n");
+                }
+            }
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+                writer.write(content.toString());
+                result = "Update success";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            result = "Update success";
+        }
+        return result;
+    }
+
 }
