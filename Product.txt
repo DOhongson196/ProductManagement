@@ -1,0 +1,3 @@
+{id=1,name=Son,manufacturer=Do,category=Hong,price=100.0}
+{id=2,name=Nhat,manufacturer=KHN,category=AD,price=200.0}
+{id=3,name=Khanh,manufacturer=Quoc,category=Trinh,price=100.0}
