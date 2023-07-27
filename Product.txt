@@ -1,4 +1,7 @@
-{id=2,name=Nhat,manufacturer=Samsung,category=Laptop,price=300.0}
-{id=3,name=Iphone,manufacturer=Apple,category=Mobile,price=200.0}
-{id=4,name=Note,manufacturer=Samsung,category=Laptop,price=300.0}
-{id=5,name=Dat,manufacturer=Batch,category=Nos,price=900.0}
+
+{id=1,name=Iphone14,manufacturer=Apple,category=Mobile,price=2000.0}
+{id=2,name=Iphone13,manufacturer=Apple,category=Mobile,price=1500.0}
+{id=3,name=Note14,manufacturer=Samsung,category=Mobile,price=1400.0}
+{id=4,name=Note13,manufacturer=Samsung,category=Mobile,price=1000.0}
+{id=5,name=Nokia1020,manufacturer=Nokia,category=Mobile,price=20.0}
+{id=6,name=LGGG,manufacturer=LG,category=Mobile,price=200.0}

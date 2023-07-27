@@ -142,7 +142,9 @@ public class ProductManager {
                         product.setCategory(updatedProduct.getCategory());
                         product.setPrice(updatedProduct.getPrice());
                     }
-                    content.append(Util.stringifyProduct(product)).append("\n");
+                    if (product != null) {
+                        content.append(Util.stringifyProduct(product)).append("\n");
+                    }
                 }else{
                     content.append(line).append("\n");
                 }
@@ -153,9 +155,37 @@ public class ProductManager {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            result = "Update success";
+            result = "Update fail";
         }
         return result;
     }
+
+//    public String updateById( Product updatedProduct) {
+//        String result = null;
+//        if (getProductById(updatedProduct.getId()) == null) {
+//            return "Product Id not found";
+//        }
+//        try (RandomAccessFile file = new RandomAccessFile(new File(filePath), "rw")) {
+//            String line;
+//            long pos = 0;
+//            while ((line = file.readLine()) != null) {
+//                if (line.contains("id=" + updatedProduct.getId() + ",")) {
+//                    Product product = Util.parseProduct(line);
+//                    if (product != null && product.getId() == updatedProduct.getId()) {
+//                        String updatedLine = Util.stringifyProduct(updatedProduct);
+//                        file.seek(pos);
+//                        file.writeBytes(updatedLine);
+//                        result = "Update success";
+//                    }
+//                }else{
+//                    pos = file.getFilePointer();
+//                }
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            result = "Update fail";
+//        }
+//        return result;
+//    }
 
 }

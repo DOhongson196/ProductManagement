@@ -9,16 +9,17 @@ public class ProductService {
         productManager = new ProductManager();
     }
 
-    public void displayAllProducts() {
+    public void getAllProducts() {
         List<Product> productList = productManager.getAllProducts();
         if (productList.isEmpty()) {
-            System.out.println("Not found product.");
+            System.out.println("Products empty");
         } else {
             for (Product product : productList) {
                 System.out.println(product.toString());
             }
         }
     }
+
 
     public void getProductsByName(String name) {
         List<Product> products = productManager.getProductByName(name);

@@ -33,7 +33,7 @@ public class Main {
             }
             switch (ch) {
                 case 1:
-                    productService.displayAllProducts();
+                    productService.getAllProducts();
                     break;
                 case 2:
                     System.out.print("Enter product name to search: ");
